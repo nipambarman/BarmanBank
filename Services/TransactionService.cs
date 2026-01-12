@@ -25,6 +25,7 @@ namespace BarmanBank.Services
 
             user.Balance += amount;
             await _userRepo.UpdateAsync(user);
+            await _context.SaveChangesAsync();
 
             var txn = new Transaction
             {

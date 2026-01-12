@@ -1,21 +1,42 @@
-@model IEnumerable<BarmanBank.Models.Transaction>
-<h2>Transactions</h2>
-<table>
+@model BarmanBank.ViewModels.TransactionsIndexViewModel
+
+@{
+    ViewData["Title"] = "My Transactions";
+}
+
+<h2>Account Summary</h2>
+<div style="margin-bottom:20px; font-size:18px;">
+    <strong>Current Balance: 
+    <span style="color: green;">@Model.Balance</span></strong>
+</div>
+
+<h2>Last Three Transactions</h2>
+
+<table style="width:100%; border-collapse:collapse;">
     <thead>
-        <tr>
-            <th>ID</th><th>Type</th><th>Amount</th><th>Date</th>
+        <tr style="background-color:#333; color:white;">
+            <th style="padding:8px; text-align:left;">ID</th>
+            <th style="padding:8px; text-align:left;">Type</th>
+            <th style="padding:8px; text-align:right;">Amount</th>
+            <th style="padding:8px; text-align:left;">Date</th>
         </tr>
     </thead>
     <tbody>
-        @foreach(var txn in Model)
+        @foreach (var txn in Model.Transactions.OrderByDescending(t => t.Timestamp).Take(3))
         {
-            <tr>
-                <td>@txn.Id</td>
-                <td>@txn.Type</td>
-                <td>@txn.Amount</td>
-                <td>@txn.Timestamp</td>
+            var isDeposit = txn.Type == BarmanBank.Models.TransactionType.Deposit;
+            <tr style="background-color:@(isDeposit ? "#e6ffed" : "#ffe6e6");">
+                <td style="padding:8px;">@txn.Id</td>
+                <td style="padding:8px;">@txn.Type</td>
+                <td style="padding:8px; text-align:right; color:@(isDeposit ? "green" : "red");">
+                    @(isDeposit ? "+" : "-")@txn.Amount:C
+                </td>
+                <td style="padding:8px;">@txn.Timestamp.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
             </tr>
         }
     </tbody>
 </table>
-<a asp-controller="Payment" asp-action="Deposit">Deposit</a>
+
+<div style="margin-top:20px;">
+    <a class="btn btn-primary" asp-controller="Payment" asp-action="Deposit">Deposit Money</a>
+</div>

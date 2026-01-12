@@ -2,3 +2,5 @@ bin/
 obj/
 .vscode/
 .git/
+# Ignore local config
+appsettings.json

@@ -1,15 +1,19 @@
 using BarmanBank.Services;
 using Microsoft.AspNetCore.Mvc;
+using BarmanBank.ViewModels;
+
 
 namespace BarmanBank.Controllers
 {
     public class TransactionsController : Controller
     {
         private readonly ITransactionService _txnService;
+        private readonly IUserService _userService;
 
-        public TransactionsController(ITransactionService txnService)
+        public TransactionsController(ITransactionService txnService, IUserService userService)
         {
             _txnService = txnService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> Index()
@@ -18,7 +22,14 @@ namespace BarmanBank.Controllers
             if (userId == null) return RedirectToAction("Login", "Account");
 
             var txns = await _txnService.GetUserTransactionsAsync(userId.Value);
-            return View(txns);
+            var user = await _userService.GetUserAsync(userId.Value);
+            var vm = new TransactionsIndexViewModel
+            {
+                Balance = user.Balance,
+                Transactions = txns
+            };
+
+            return View(vm);
         }
 
         public async Task<IActionResult> Details(int id)

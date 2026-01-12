@@ -24,13 +24,30 @@ namespace BarmanBank.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login", "Account");
-
-            if (!ModelState.IsValid) return View(vm);
-
             // Create Razorpay Order
             var orderId = await _paymentService.CreatePaymentOrderAsync(userId.Value, vm.Amount);
             vm.RazorpayOrderId = orderId;
-            return View("Checkout", vm); // Show Razorpay checkout page
+
+            if (!ModelState.IsValid) 
+            {
+                try
+                {
+                    await _txnService.DepositAsync(userId.Value, vm.Amount, vm.RazorpayOrderId);
+
+                    TempData["Success"] = "Deposit successful";
+                    return RedirectToAction("Index", "Transactions");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                    return View(vm);
+                }
+
+            }
+            
+            
+            
+            return View("Checkout", vm);// Show Razorpay checkout page
         }
 
         [HttpPost]

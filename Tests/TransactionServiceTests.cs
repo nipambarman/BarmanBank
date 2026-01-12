@@ -3,6 +3,7 @@ using BarmanBank.Services;
 using BarmanBank.Data;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 public class TransactionServiceTests
 {
@@ -13,8 +14,10 @@ public class TransactionServiceTests
     public TransactionServiceTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase("TxnTestDb").Options;
-        _context = new AppDbContext(options);
+    .UseInMemoryDatabase("TxnTestDb")
+    .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+    .Options;
+
 
         _userRepo = new Repository<User>(_context);
         var txnRepo = new Repository<Transaction>(_context);
