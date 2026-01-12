@@ -1,0 +1,20 @@
+@model BarmanBank.ViewModels.DepositViewModel
+<h2>Checkout</h2>
+<p>Redirecting to payment...</p>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "RAZORPAY_KEY",
+        "amount": @Model.Amount * 100,
+        "currency": "INR",
+        "name": "BarmanBank",
+        "description": "Deposit",
+        "order_id": "@Model.RazorpayOrderId",
+        "handler": function (response) {
+            alert("Payment Successful: " + response.razorpay_payment_id);
+            window.location.href = "/Transactions/Index";
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+</script>

@@ -1,4 +1,8 @@
+using BarmanBank.Data;          // For AppDbContext, Repository
+using BarmanBank.Services;      // For UserService, TransactionService, PaymentService
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +20,23 @@ builder.Host.UseSerilog();
 // --------------------
 // Services
 // --------------------
-builder.Services
-    .AddControllersWithViews()
-    .AddRazorRuntimeCompilation();
+
+// Add DbContext with SQL Server
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register repositories and services
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// Add session support
+builder.Services.AddSession();
+
+// Add controllers with views + Razor runtime compilation
+builder.Services.AddControllersWithViews()
+       .AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
@@ -38,15 +56,14 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
-
-
+app.UseSession(); // <-- Make sure to add session middleware
 
 // --------------------
 // Routes
 // --------------------
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    ;
+    pattern: "{controller=Account}/{action=Login}/{id?}"
+);
 
 app.Run();

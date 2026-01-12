@@ -1,0 +1,7 @@
+@model BarmanBank.ViewModels.DepositViewModel
+<h2>Deposit Funds</h2>
+<form asp-action="Deposit" method="post">
+    <input asp-for="Amount" placeholder="Amount" />
+    <span asp-validation-for="Amount"></span>
+    <button type="submit">Pay</button>
+</form>

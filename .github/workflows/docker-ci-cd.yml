@@ -29,5 +29,5 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          ${{ secrets.DOCKER_USERNAME }}/helloworld:latest
-          ${{ secrets.DOCKER_USERNAME }}/helloworld:${{ github.sha }}
+          ${{ secrets.DOCKER_USERNAME }}/barmanbank:latest
+          ${{ secrets.DOCKER_USERNAME }}/barmanbank:${{ github.sha }}

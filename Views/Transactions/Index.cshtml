@@ -1,0 +1,21 @@
+@model IEnumerable<BarmanBank.Models.Transaction>
+<h2>Transactions</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th><th>Type</th><th>Amount</th><th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var txn in Model)
+        {
+            <tr>
+                <td>@txn.Id</td>
+                <td>@txn.Type</td>
+                <td>@txn.Amount</td>
+                <td>@txn.Timestamp</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Payment" asp-action="Deposit">Deposit</a>
