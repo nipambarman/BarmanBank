@@ -1,5 +1,6 @@
 @model BarmanBank.ViewModels.TransactionsIndexViewModel
 
+
 @{
     ViewData["Title"] = "My Transactions";
 }
@@ -39,4 +40,12 @@
 
 <div style="margin-top:20px;">
     <a class="btn btn-primary" asp-controller="Payment" asp-action="Deposit">Deposit Money</a>
+</div>
+
+<div style="margin-top:20px;">
+    <a class="btn btn-primary" asp-controller="Payment" asp-action="Withdraw">Withdraw Money</a>
+</div>
+<div style="margin:15px 0; padding:10px; background:#eef;">
+    <strong>AI Daily Insight:</strong>
+    <p>@Model.DailyInsight</p>
 </div>

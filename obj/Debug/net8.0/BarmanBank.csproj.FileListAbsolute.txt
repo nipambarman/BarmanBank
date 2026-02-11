@@ -353,6 +353,8 @@ D:\BarmanBank\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.Common.dll
 D:\BarmanBank\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 D:\BarmanBank\bin\Debug\net8.0\Mono.TextTemplating.dll
 D:\BarmanBank\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\BarmanBank\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\BarmanBank\bin\Debug\net8.0\Razorpay.dll
 D:\BarmanBank\bin\Debug\net8.0\Serilog.dll
 D:\BarmanBank\bin\Debug\net8.0\Serilog.AspNetCore.dll
 D:\BarmanBank\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll

@@ -33,12 +33,31 @@ namespace BarmanBank.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("BalanceAfter")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
                     b.Property<string>("PaymentGatewayId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RazorpayOrderId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReferenceId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -70,8 +89,7 @@ namespace BarmanBank.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -81,12 +99,17 @@ namespace BarmanBank.Migrations
             modelBuilder.Entity("BarmanBank.Models.Transaction", b =>
                 {
                     b.HasOne("BarmanBank.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BarmanBank.Models.User", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

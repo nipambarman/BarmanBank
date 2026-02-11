@@ -6,6 +6,6 @@ namespace BarmanBank.Services
     {
         Task<IEnumerable<Transaction>> GetUserTransactionsAsync(int userId);
         Task<Transaction> DepositAsync(int userId, decimal amount, string paymentId = null);
-        Task<Transaction> WithdrawAsync(int userId, decimal amount);
+        Task<Transaction> WithdrawAsync(int userId, decimal amount, string paymentId = null);
     }
 }

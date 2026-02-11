@@ -1,7 +1,26 @@
 @model BarmanBank.ViewModels.DepositViewModel
+
 <h2>Deposit Funds</h2>
+
+<p>Maximum deposit per transaction: <strong>₹200,000</strong></p>
+
 <form asp-action="Deposit" method="post">
-    <input asp-for="Amount" placeholder="Amount" />
-    <span asp-validation-for="Amount"></span>
-    <button type="submit">Pay</button>
+    <div>
+        <label>Amount</label>
+        <input asp-for="Amount" placeholder="Enter amount" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <div>
+        <button type="submit">Deposit</button>
+    </div>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
 </form>
+
+@if (TempData["Success"] != null)
+{
+    <div style="color:green; margin-top:10px;">
+        @TempData["Success"]
+    </div>
+}

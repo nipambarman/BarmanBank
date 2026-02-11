@@ -1,18 +1,13 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace BarmanBank.Models
 {
     public class User
     {
-        [Key]
         public int Id { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty; // Initialized
+        public decimal Balance { get; set; }
 
-        [Required, MaxLength(50)]
-        public required string Username { get; set; }
-
-        [Required]
-        public string PasswordHash { get; set; }
-
-        public decimal Balance { get; set; } = 0;
+        // Optional: Navigation property
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BarmanBank")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29159485d3d684d69f68ea78e8d284823b13833a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31fa3c6ce0a8bc3e071285ad0c84ea823cd78ee8")]
 [assembly: System.Reflection.AssemblyProductAttribute("BarmanBank")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BarmanBank")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,0 +1,24 @@
+@model BarmanBank.ViewModels.WithdrawViewModel
+
+<h2>Withdraw Funds</h2>
+
+<form asp-action="Withdraw" method="post">
+    <div>
+        <label>Amount</label>
+        <input asp-for="Amount" placeholder="Enter amount" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <div>
+        <button type="submit">Withdraw</button>
+    </div>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+</form>
+
+@if (TempData["Success"] != null)
+{
+    <div style="color:green; margin-top:10px;">
+        @TempData["Success"]
+    </div>
+}

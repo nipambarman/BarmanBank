@@ -1,8 +1,8 @@
-using BarmanBank.Data;          // For AppDbContext, Repository
-using BarmanBank.Services;      // For UserService, TransactionService, PaymentService
+using BarmanBank.Data;
+using BarmanBank.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Events;
+using Razorpay.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,11 +25,22 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register repositories and services
+// Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+// Razorpay client registration must happen BEFORE TransactionService
+builder.Services.AddScoped<RazorpayClient>(sp =>
+{
+    string key = builder.Configuration["Razorpay:Key"];
+    string secret = builder.Configuration["Razorpay:Secret"];
+    return new RazorpayClient(key, secret);
+});
+
+// Register services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IAiInsightService, AiInsightService>();
 
 // Add session support
 builder.Services.AddSession();
@@ -53,10 +64,12 @@ if (!app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthorization();
-app.UseSession(); // <-- Make sure to add session middleware
+app.UseSession(); // <-- Session middleware
 
 // --------------------
 // Routes

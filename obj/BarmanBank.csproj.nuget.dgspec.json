@@ -71,6 +71,10 @@
               "target": "Package",
               "version": "[17.9.0, )"
             },
+            "Razorpay": {
+              "target": "Package",
+              "version": "[3.3.2, )"
+            },
             "Serilog.AspNetCore": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -115,7 +119,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

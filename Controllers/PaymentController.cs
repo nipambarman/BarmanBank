@@ -1,7 +1,7 @@
 using BarmanBank.Services;
 using BarmanBank.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace BarmanBank.Controllers
 {
@@ -9,11 +9,15 @@ namespace BarmanBank.Controllers
     {
         private readonly IPaymentService _paymentService;
         private readonly ITransactionService _txnService;
+        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(IPaymentService paymentService, ITransactionService txnService)
+        private const decimal MaxDepositAmount = 200_000m; // max per transaction
+
+        public PaymentController(IPaymentService paymentService, ITransactionService txnService, ILogger<PaymentController> logger)
         {
             _paymentService = paymentService;
             _txnService = txnService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -24,51 +28,68 @@ namespace BarmanBank.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login", "Account");
-            // Create Razorpay Order
-            var orderId = await _paymentService.CreatePaymentOrderAsync(userId.Value, vm.Amount);
-            vm.RazorpayOrderId = orderId;
 
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid) return View(vm);
+
+            try
             {
-                try
+                if (vm.Amount > MaxDepositAmount)
                 {
-                    await _txnService.DepositAsync(userId.Value, vm.Amount, vm.RazorpayOrderId);
-
-                    TempData["Success"] = "Deposit successful";
-                    return RedirectToAction("Index", "Transactions");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
+                    ModelState.AddModelError("", $"Maximum deposit per transaction is ₹{MaxDepositAmount:N0}");
+                    _logger.LogWarning("User {UserId} tried to deposit {Amount} exceeding max limit {MaxAmount}", userId, vm.Amount, MaxDepositAmount);
                     return View(vm);
                 }
 
+                // Process deposit
+                var txn = await _txnService.DepositAsync(userId.Value, vm.Amount);
+
+                TempData["Success"] = $"Deposit successful: {txn.Amount:C}";
+                _logger.LogInformation(
+    "Transaction completed | Ref={ReferenceId} | Type={Type}",
+    txn.ReferenceId,
+    txn.Type
+);
+
+
+                return RedirectToAction("Index", "Transactions");
             }
-            
-            
-            
-            return View("Checkout", vm);// Show Razorpay checkout page
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during deposit for user {UserId}", userId);
+                ModelState.AddModelError("", ex.Message);
+                return View(vm);
+            }
         }
 
+        [HttpGet]
+        public IActionResult Withdraw() => View(new WithdrawViewModel());
+
         [HttpPost]
-        public async Task<IActionResult> Webhook()
+        public async Task<IActionResult> Withdraw(WithdrawViewModel wm)
         {
-            using var reader = new StreamReader(Request.Body);
-            var payload = await reader.ReadToEndAsync();
-            var signature = Request.Headers["X-Razorpay-Signature"];
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            bool isValid = await _paymentService.VerifyPaymentWebhookAsync(payload, signature);
+            if (!ModelState.IsValid) return View(wm);
 
-            if (!isValid) return BadRequest();
+            try
+            {
+                var txn = await _txnService.WithdrawAsync(userId.Value, wm.Amount);
+                TempData["Success"] = $"Withdrawal successful: {txn.Amount:C}";
+                _logger.LogInformation(
+    "Transaction completed | Ref={ReferenceId} | Type={Type}",
+    txn.ReferenceId,
+    txn.Type
+);
 
-            // Parse payload and update DB transaction
-            dynamic json = System.Text.Json.JsonSerializer.Deserialize<dynamic>(payload);
-            int userId = int.Parse(json["payload"]["payment"]["entity"]["notes"]["user_id"].ToString());
-            decimal amount = int.Parse(json["payload"]["payment"]["entity"]["amount"].ToString()) / 100m;
-            string paymentId = json["payload"]["payment"]["entity"]["id"].ToString();
-
-            await _txnService.DepositAsync(userId, amount, paymentId);
-            return Ok();
+                return RedirectToAction("Index", "Transactions");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during withdrawal for user {UserId}", userId);
+                ModelState.AddModelError("", ex.Message);
+                return View(wm);
+            }
         }
     }
 }

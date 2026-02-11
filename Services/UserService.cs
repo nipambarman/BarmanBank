@@ -16,7 +16,7 @@ namespace BarmanBank.Services
             _context = context;
         }
 
-        public async Task<User> AuthenticateAsync(string username, string password)
+        public async Task<User?> AuthenticateAsync(string username, string password)
         {
             var users = await _repo.FindAsync(u => u.Username == username);
             var user = users.FirstOrDefault();
@@ -41,7 +41,14 @@ namespace BarmanBank.Services
             return user;
         }
 
-        public async Task<User> GetUserAsync(int id) => await _repo.GetAsync(id);
+        public async Task<User?> GetUserAsync(int id) => await _repo.GetAsync(id);
+
+        public async Task<User?> GetCurrentUserAsync()
+        {
+            // Placeholder: replace with actual logic to get logged-in user
+            var users = await _repo.FindAsync(u => true);
+            return users.FirstOrDefault();
+        }
 
         private string HashPassword(string password)
         {
