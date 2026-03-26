@@ -1,0 +1,43 @@
+# Dependencies
+bin/
+obj/
+publish/
+publish.zip
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+appsettings.Development.json
+
+# Test results
+TestResults/
+*.trx
+
+# NuGet
+packages/
+*.nupkg
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+.dockerignore
